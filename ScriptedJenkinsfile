@@ -1,0 +1,17 @@
+node("agent"){
+    stage("Git checkout"){
+        git credentialsId: '8969c6e7-68ba-45fa-96c0-0aba57754e2b', url: 'git@github.com:aragastmatb/example-playbook.git'
+    }
+    stage("Set prod_run"){
+       prod_run = env.IS_PROD ? true : false
+    }
+    stage("Run playbook"){
+        if (prod_run){
+            sh 'ansible-playbook site.yml -i inventory/prod.yml'
+        }
+        else{
+            sh 'ansible-playbook tests/test.yml -i tests/inventory --check --diff'
+        }
+        
+    }
+}
